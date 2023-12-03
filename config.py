@@ -1,6 +1,6 @@
 from logging import Formatter
 
-envVar = 'password_baula_bot'
+envKeyToken = 'password_baula_bot'
 
 class Log:
     def __init__(self):

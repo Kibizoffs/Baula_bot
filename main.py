@@ -9,9 +9,11 @@ from utils import getTime
 
 async def main():
     startTime = getTime()
-    bot = Bot(token=os.getenv(envVar))
+
+    bot = Bot(token=os.getenv(envKeyToken))
     me = await bot.get_me()
     dp = Dispatcher()
+
     BotCommandsHandler(bot, dp, me, startTime).registerCommands()
 
     await dp.start_polling(bot)
