@@ -1,16 +1,15 @@
-# библиотеки
 import sqlite3
-# модули
-from config import *
 
 sqlCreateTable = \
     """
-    CREATE TABLE IF NOT EXISTS STUDENTS (
-        username text,
+    CREATE TABLE IF NOT EXISTS Students (
+        tgUsername text PRIMARY KEY,
+        studentID text,
         lastName text,
         middleName text,
         firstName text,
-        'group' integer
+        'group' integer,
+        showResults integer
     );
     """
 
