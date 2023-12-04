@@ -1,22 +1,20 @@
-from aiogram import Bot, Dispatcher
+import aiogram
 import asyncio
 import os
 
-from Commands.bot import BotCommandsHandler
-from config import envVar
+from config import env_key_token
 from logger import logger
-from utils import getTime
+from utils import get_time
 
-async def main():
-    startTime = getTime()
+start_time = get_time()
 
-    bot = Bot(token=os.getenv(envKeyToken))
-    me = await bot.get_me()
-    dp = Dispatcher()
-
-    BotCommandsHandler(bot, dp, me, startTime).registerCommands()
-
-    await dp.start_polling(bot)
+bot = aiogram.Bot(token=os.getenv(env_key_token))
+dp = aiogram.Dispatcher()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    from Commands.bot import bot_router
+    from Commands.db import db_router
+    dp.include_routers(bot_router, db_router)
+
+    asyncio.run(dp.start_polling(bot))
+
