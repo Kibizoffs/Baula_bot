@@ -10,3 +10,8 @@ class Log:
         self.stream_format = Formatter('%(message)s')
         self.max_size = 2 * 1024 * 1024  # 2Mb
 log = Log()
+
+class DB:
+    def __init__(self):
+        self.file_path = 'db.sqlite'
+db = DB()

@@ -8,7 +8,16 @@
     <li>/start</li>
     <li>/baula</li>
     <li>/passport</li>
-    <li>/edit</li>
+    <li>
+        /edit &lt;key&gt; &lt;value&gt;
+        <ul>
+            <li>last_name &lt;фамилия&gt;</li>
+            <li>first_name &lt;имя&gt;</li>
+            <li>middle_name &lt;отчество&gt;</li>
+            <li>show_baula_res &lt;0 или 1&gt;</li>
+            <li>stats &lt;0 или 1&gt;</li>
+        </ul>
+    </li>
     <li>/register</li>
     <li>/delete</li>
 </ul>
