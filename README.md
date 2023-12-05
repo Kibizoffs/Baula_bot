@@ -5,23 +5,25 @@
 
 <h2>Использование</h2>
 <ul>
-    <li>/start</li>
-    <li>/baula</li>
-    <li>/passport</li>
+    <li>/start</li> - меню команд
+    <li>/baula</li> - инфо о боте
+    <li>/feedback &lt;сообщение&gt;</li> - отправить сообщение разработчикам Baula_bot
+    <li>/passport</li> - запись о вас в базе данных
     <li>
-        /edit &lt;key&gt; &lt;value&gt;
+        /edit &lt;ключ&gt; &lt;значение&gt; - установить значение к ключу в записе о вас в базе данных
         <ul>
             <li>last_name &lt;фамилия&gt;</li>
             <li>first_name &lt;имя&gt;</li>
             <li>middle_name &lt;отчество&gt;</li>
-            <li>show_baula_res &lt;0 или 1&gt;</li>
-            <li>stats &lt;0 или 1&gt;</li>
+            <li>group_id &lt;группа&gt;</li>
+            <li>send_baula_res &lt;0 (отключено) или 1 (включено)&gt;</li> - присылать результаты ср
+            <li>stats &lt;-1 (отключено) или 0 (включено)&gt;</li> - участвовать в статистике
         </ul>
     </li>
     <li>/register</li>
     <li>/delete</li>
 </ul>
-<p>Для рассылки постов с пабликов обратитесь к администраторам Baula_bot</p>
+<p>Для рассылки постов с пабликов обратитесь к разработчикам Baula_bot</p>
 <h2>Разработка</h2>
 <ul>
     <li>

@@ -1,6 +1,9 @@
 from logging import Formatter
+import sqlite3
 
 env_key_token = 'password_baula_bot'
+
+admin_ids = [280099956]
 
 class Log:
     def __init__(self):
@@ -13,5 +16,9 @@ log = Log()
 
 class DB:
     def __init__(self):
+        self.max_size = 2560
         self.file_path = 'db.sqlite'
+        self.con = sqlite3.connect(self.file_path)
+        self.cur = self.con.cursor()
+        
 db = DB()

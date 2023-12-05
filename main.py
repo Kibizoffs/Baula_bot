@@ -19,7 +19,7 @@ if __name__ == '__main__':
     from Events.stats import stats_router
     from Events.vk import vk_router
     dp.include_routers(
-        bot_router, db_router, google_docs_router,
+        db_router, bot_router, google_docs_router,
         send_baula_res_router, stats_router, vk_router)
 
     asyncio.run(dp.start_polling(bot))
