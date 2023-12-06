@@ -12,14 +12,16 @@ bot = aiogram.Bot(token=os.getenv(env_key_token))
 dp = aiogram.Dispatcher()
 
 if __name__ == '__main__':
+    from Commands.admin import admin_router
     from Commands.bot import bot_router
     from Commands.db import db_router
+    from Commands.fun import fun_router
     from Events.google_docs import google_docs_router
     from Events.send_baula_res import send_baula_res_router
     from Events.stats import stats_router
     from Events.vk import vk_router
     dp.include_routers(
-        db_router, bot_router, google_docs_router,
+        admin_router, bot_router, db_router, fun_router, google_docs_router,
         send_baula_res_router, stats_router, vk_router)
 
     asyncio.run(dp.start_polling(bot))

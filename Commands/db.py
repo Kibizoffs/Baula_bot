@@ -12,9 +12,6 @@ db_router = aiogram.Router()
 
 @db_router.message(Command(commands=['passport', 'me', 'паспорт', 'я']))
 async def command_passport(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     student_id = msg.from_user.id
     select_columns = [
         'id', 'last_name', 'first_name',
@@ -30,9 +27,6 @@ async def command_passport(msg: Message):
 
 @db_router.message(Command(commands=['edit', 'изменить']))
 async def command_edit(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     student_id = msg.from_user.id
     select_columns = ['last_name', 'first_name', 'middle_name', 'group_id', 'send_baula_res', 'msg_count_1w']
     db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE ID = ?", (student_id,))
@@ -77,9 +71,6 @@ async def command_edit(msg: Message):
 
 @db_router.message(Command(commands=['register', 'create', 'создать']))
 async def command_register(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     student_id = msg.from_user.id
     db.cur.execute("SELECT * FROM Students WHERE ID = ?", (student_id,))
     result = db.cur.fetchone()
@@ -94,9 +85,6 @@ async def command_register(msg: Message):
 
 @db_router.message(Command(commands=['delete', 'remove', 'удалить']))
 async def command_delete(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     student_id = msg.from_user.id
     db.cur.execute("SELECT * FROM Students WHERE ID = ?", (student_id,))
     result = db.cur.fetchone()

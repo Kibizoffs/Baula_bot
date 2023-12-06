@@ -14,9 +14,6 @@ bot_router = aiogram.Router()
 
 @bot_router.message(Command(commands=['start', 'help', 'старт', 'хелп', 'хэлп', 'помощь']))
 async def command_help(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     await msg.answer(help_text)
 
 @bot_router.message(Command(commands=['baula', 'баула']))
@@ -34,9 +31,6 @@ async def command_baula(msg: Message):
 
 @bot_router.message(Command(commands=['feedback', 'отзыв']))
 async def command_feedback(msg: Message):
-    if msg.chat.type != ChatType.PRIVATE:
-        await msg.answer(command_only_private_chat.format(msg.split()[0]))
-        return
     if len(msg.text.split()) < 2:
         await msg.answer(empty_message)
         return
