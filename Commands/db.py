@@ -13,7 +13,7 @@ db_router = aiogram.Router()
 async def command_passport(msg: Message):
     student_id = msg.from_user.id
     select_columns = [
-        'id', 'last_name', 'group_id',
+        'id', 'gr', 'last_name',
         'pe', 'rubl', 'msg_count_1w',
         'send_baula_res'
     ]
@@ -39,7 +39,7 @@ async def command_edit(msg: Message):
         
     student_id = msg.from_user.id
     select_columns = [
-        'id', 'last_name', 'group_id',
+        'id', 'gr', 'last_name',
         'msg_count_1w', 'send_baula_res'
     ]
     db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE id = ?", (student_id,))
@@ -56,12 +56,12 @@ async def command_edit(msg: Message):
                 dr.cur.execute(f'DELETE FROM Students WHERE id = ? AND {key} = ?')
                 await msg.answer(edit_deleted)
             else:
-                regex_group = re.compile(r'^\d{3}$')
+                regex_gr = re.compile(r'^\d{3}$')
                 regex_send_baula_res = re.compile(r'^[01]$')
-                regex_msg_count = re.compile(r'^-1|0$')
-                if key == 'group_id' and (not regex_group.match(val)) or \
+                regex_msg_count_1w = re.compile(r'^-1|0$')
+                if key == 'gr' and (not regex_gr.match(val)) or \
                     key == 'send_baula_res' and (not regex_send_baula_res.match(val)) or \
-                    key == 'msg_count_1w' and (not regex_msg_count.match(val)):
+                    key == 'msg_count_1w' and (not regex_msg_count_1w.match(val)):
                     await msg.answer(wrong_format)
                     return
                 db.cur.execute(f'UPDATE Students SET {key} = ? WHERE id = ?', (val, student_id))
@@ -80,11 +80,11 @@ async def command_register(msg: Message):
     if result:
         await msg.answer(already_registered)
         return
-    db.cur.execute("INSERT INTO Students (id, pe, rubl, msg_count_1w, send_baula_res) VALUES (?, ?, ?, ?, ?)",
-        (student_id, 0, 0, 0, 1))
+    db.cur.execute("INSERT INTO Students (id, gr, pe, rubl, msg_count_1w, send_baula_res) VALUES (?, ?, ?, ?, ?, ?)",
+        (student_id, None, 0, 0, 0, 1))
     db.con.commit()
     await msg.answer(register_ok)
-    await msg.answer(edit_text)
+    await msg.answer(edit_txt)
 
 @db_router.message(Command(commands=['delete', 'remove', 'удалить']))
 async def command_delete(msg: Message):

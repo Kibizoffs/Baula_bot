@@ -5,20 +5,20 @@ from config import db
 sql_create_groups_table = \
     """
     CREATE TABLE IF NOT EXISTS Groups (
-        id integer PRIMARY KEY,
-        group_id integer,
-        ch_stats integer,
-        url_baula text,
-        ch_mathhedgehog integer,
-        ch_profkomvmk integer
+        id bigint PRIMARY KEY,
+        gr integer,
+        thread_stats integer,
+        thread_mathhedgehog integer,
+        thread_profkomvmk integer,
+        url_baula text
     );
     """
 sql_create_students_table = \
     """
     CREATE TABLE IF NOT EXISTS Students (
         id integer PRIMARY KEY,
+        gr integer,
         last_name text,
-        group_id integer,
         pe integer,
         rubl integer,
         msg_count_1w integer,

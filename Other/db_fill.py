@@ -4,14 +4,14 @@ sql_fill_groups_table = \
     """
     INSERT INTO Groups (
         id,
-        group_id,
-        ch_stats,
-        ch_mathhedgehog,
-        ch_profkomvmk,
+        gr,
+        thread_stats,
+        thread_mathhedgehog,
+        thread_profkomvmk,
         url_baula
     ) 
     VALUES (
-        1922535101,
+        -1001922535101,
         107,
         18064,
         5850,

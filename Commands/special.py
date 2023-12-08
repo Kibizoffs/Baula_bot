@@ -6,6 +6,7 @@ import qrcode
 import io
 import os
 from PIL import Image, ImageDraw, ImageFont
+import yt_dlp
 
 from config import get_path
 from main import bot
@@ -35,3 +36,21 @@ async def command_qr(msg: Message):
     )
 
     os.remove(qr_image_path)
+
+@special_router.message(Command(commands=['ютуб']))
+async def command_yt(msg: Message):
+    if len(msg.text.split()) < 2:
+        await bot.send_message(empty_message)
+        return
+
+    yt_opts = {}
+    yt = yt_dlp.YoutubeDL(yt_opts)
+
+    url = msg.text.split()[1]
+    
+    info = ydl.extract_info(url, download=False)
+
+    print('--')
+    print(info)
+    print(yt.sanitize_info(info))
+    print(json.dumps(ydl.sanitize_info(info)))
