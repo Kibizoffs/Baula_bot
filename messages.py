@@ -8,9 +8,12 @@ already_registered = 'Вы уже зарегистрированы'
 register_ok = 'Регистрация прошла успешно'
 not_yet_registered = 'Вы ещё не были зарегистрированы'
 delete_ok = 'Удаление прошло успешно'
+pe_rubl_err = 'Плохие числа'
+pe_ok = 'Было {} ⚽. Стало {} ⚽'
+rubl_ok = 'Было {}₽. Стало {}₽'
 
 baula_text = (
-    'ID: <code>{}</code>\n' +
+    'id: <code>{}</code>\n' +
     'Юзернейм: {}\n' +
     "Библиотека: <a href='https://pypi.org/project/aiogram/'>Aiogram {}</a>\n" +
     "Хостинг: <a href='https://timeweb.cloud/r/kibizoffs1'>Timeweb</a>\n" +

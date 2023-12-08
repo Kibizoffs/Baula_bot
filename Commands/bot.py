@@ -2,13 +2,12 @@ import aiogram
 from aiogram.filters import Command
 from aiogram.types import \
     Message, ReplyKeyboardMarkup, KeyboardButton
-from aiogram.enums.chat_type import ChatType
 from platform import system
 
 from config import admin_ids
 from main import bot, start_time
 from messages import *
-from utils import get_time
+from utils import *
 
 bot_router = aiogram.Router()
 
@@ -37,7 +36,7 @@ async def command_feedback(msg: Message):
     for admin_id in admin_ids:
         try:
             await bot.send_message(chat_id=admin_id, text=f'{msg.from_user.username}\n{msg.text}')
-        except Exception:
+        except:
             await msg.answer(feedback_err)
             return
     await msg.answer(feedback_ok)

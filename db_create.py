@@ -5,7 +5,8 @@ from config import db
 sql_create_groups_table = \
     """
     CREATE TABLE IF NOT EXISTS Groups (
-        ID integer PRIMARY KEY,
+        id integer PRIMARY KEY,
+        group_id integer,
         ch_stats integer,
         url_baula text,
         ch_mathhedgehog integer,
@@ -15,13 +16,13 @@ sql_create_groups_table = \
 sql_create_students_table = \
     """
     CREATE TABLE IF NOT EXISTS Students (
-        ID integer PRIMARY KEY,
+        id integer PRIMARY KEY,
         last_name text,
-        first_name text,
-        middle_name text,
         group_id integer,
-        send_baula_res integer,
-        msg_count_1w integer
+        pe integer,
+        rubl integer,
+        msg_count_1w integer,
+        send_baula_res integer
     );
     """
 

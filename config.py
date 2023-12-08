@@ -5,6 +5,9 @@ env_key_token = 'password_baula_bot'
 
 admin_ids = [280099956]
 
+def get_path(s):
+    return f'Temp/{str(s)}.png'
+
 class Log:
     def __init__(self):
         self.backup_count = 1

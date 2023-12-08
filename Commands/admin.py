@@ -1,7 +1,6 @@
 import aiogram
 from aiogram.filters import Command
 from aiogram.types import Message
-from aiogram.enums.chat_type import ChatType
 
 from config import admin_ids
 from main import bot
@@ -18,4 +17,4 @@ async def command_say(msg: Message):
     if is_admin:
         await msg.delete()
         if len(msg.text.split()) > 1:
-            await msg.answer(msg.text.split()[1])
+            await msg.answer(' '.join(x for x in msg.text.split()[1:]))
