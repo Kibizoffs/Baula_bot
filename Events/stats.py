@@ -69,5 +69,3 @@ async def send_and_clear_stats():
                 await asyncio.sleep(7 * 24 * 60 * 60)
         else:
             await asyncio.sleep(60)
-
-asyncio.run(send_and_clear_stats())
