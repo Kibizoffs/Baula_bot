@@ -35,7 +35,7 @@ async def parse_msgs(msg: Message):
 async def send_and_clear_stats():
     while True:
         now = datetime.now()
-        if now.weekday() == 4 and now.hour == 18 and now.minute == 00:
+        if now.weekday() == 4 and now.hour == 18 and now.minute == 0:
             db.cur.execute("SELECT id, gr, thread_stats FROM Groups")
             group_rows = db.cur.fetchall()
             for group_row in group_rows:
@@ -62,7 +62,7 @@ async def send_and_clear_stats():
                 group_msg_data.sort()
                 
                 full_name = f'{student.first_name} {student.last_name}' if student.last_name else student.first_name
-                answer = (amount_of_msgs +
+                answer = (amount_of_msgs + '\n' +
                     '\n'.join(f"{full_name}: {x[0] if x[0] < 2048 else 'MAX'}" for x in group_msg_data))
                 await bot.send_message(chat_id=group_id, message_thread_id=thread_stats, text=answer)
 

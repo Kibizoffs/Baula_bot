@@ -9,8 +9,7 @@ sql_create_groups_table = \
         gr integer,
         thread_stats integer,
         thread_mathhedgehog integer,
-        thread_profkomvmk integer,
-        url_baula text
+        thread_profkomvmk integer
     );
     """
 sql_create_students_table = \
@@ -21,8 +20,7 @@ sql_create_students_table = \
         last_name text,
         pe integer,
         rubl integer,
-        msg_count_1w integer,
-        send_baula_res integer
+        msg_count_1w integer
     );
     """
 

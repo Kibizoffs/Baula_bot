@@ -5,8 +5,8 @@ env_key_token = 'password_baula_bot'
 
 admin_ids = [280099956]
 
-def get_path(s):
-    return f'Temp/{str(s)}.png'
+def get_path(s, ext):
+    return f'Temp/{str(s)}.{ext}'
 
 class Log:
     def __init__(self):

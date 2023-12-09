@@ -7,16 +7,14 @@ sql_fill_groups_table = \
         gr,
         thread_stats,
         thread_mathhedgehog,
-        thread_profkomvmk,
-        url_baula
+        thread_profkomvmk
     ) 
     VALUES (
         -1001922535101,
         107,
         18064,
         5850,
-        5850,
-        '1gR7o0t9ewkMb499jHVt-z36Fgd8erb0y-blv_Rv6Kz0'
+        5850
     );
     """
 

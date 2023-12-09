@@ -1,6 +1,6 @@
 import aiogram
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 import re
 
 from config import db
@@ -14,8 +14,7 @@ async def command_passport(msg: Message):
     student_id = msg.from_user.id
     select_columns = [
         'id', 'gr', 'last_name',
-        'pe', 'rubl', 'msg_count_1w',
-        'send_baula_res'
+        'pe', 'rubl', 'msg_count_1w'
     ]
     db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE id = ?", (student_id,))
     row = db.cur.fetchone()
@@ -29,7 +28,7 @@ async def command_passport(msg: Message):
 async def command_edit(msg: Message):
     arguments = msg.text.split()
     if len(arguments) < 2:
-        await msg.answer(edit_text)
+        await msg.answer(edit_txt)
         return
     key = arguments[1].lower()
     val = arguments[2]
@@ -40,7 +39,7 @@ async def command_edit(msg: Message):
     student_id = msg.from_user.id
     select_columns = [
         'id', 'gr', 'last_name',
-        'msg_count_1w', 'send_baula_res'
+        'msg_count_1w'
     ]
     db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE id = ?", (student_id,))
     result = db.cur.fetchone()
@@ -56,12 +55,10 @@ async def command_edit(msg: Message):
                 dr.cur.execute(f'DELETE FROM Students WHERE id = ? AND {key} = ?')
                 await msg.answer(edit_deleted)
             else:
-                regex_gr = re.compile(r'^\d{3}$')
-                regex_send_baula_res = re.compile(r'^[01]$')
-                regex_msg_count_1w = re.compile(r'^-1|0$')
-                if key == 'gr' and (not regex_gr.match(val)) or \
-                    key == 'send_baula_res' and (not regex_send_baula_res.match(val)) or \
-                    key == 'msg_count_1w' and (not regex_msg_count_1w.match(val)):
+                regex_gr = r'^\d{3}$'
+                regex_msg_count_1w = r'^-1|0$'
+                if key == 'gr' and (not re.match(regex_gr, val)) or \
+                    key == 'msg_count_1w' and (not re.match(regex_msg_count_1w, val)):
                     await msg.answer(wrong_format)
                     return
                 db.cur.execute(f'UPDATE Students SET {key} = ? WHERE id = ?', (val, student_id))
@@ -80,11 +77,12 @@ async def command_register(msg: Message):
     if result:
         await msg.answer(already_registered)
         return
-    db.cur.execute("INSERT INTO Students (id, gr, pe, rubl, msg_count_1w, send_baula_res) VALUES (?, ?, ?, ?, ?, ?)",
-        (student_id, None, 0, 0, 0, 1))
+    db.cur.execute("INSERT INTO Students (id, gr, pe, rubl, msg_count_1w) VALUES (?, ?, ?, ?, ?)",
+        (student_id, None, 0, 0, 0))
     db.con.commit()
     await msg.answer(register_ok)
     await msg.answer(edit_txt)
+
 
 @db_router.message(Command(commands=['delete', 'remove', 'удалить']))
 async def command_delete(msg: Message):
@@ -94,18 +92,34 @@ async def command_delete(msg: Message):
     if not result:
         await msg.answer(not_yet_registered)
         return
-    db.cur.execute("DELETE FROM Students WHERE id = ?", (student_id,))
-    db.con.commit()
-    await msg.answer(delete_ok)
 
-async def rubl_pe(arguments, cmd):
+    cancel_button = InlineKeyboardButton(text="❌", callback_data="cancel_deletion")
+    confirm_button = InlineKeyboardButton(text="✅", callback_data="confirm_deletion")
+    confirm_keyboard = InlineKeyboardMarkup(inline_keyboard=[[cancel_button, confirm_button]])
+
+    await msg.answer(delete_confirm, reply_markup=confirm_keyboard)
+
+@db_router.callback_query()
+async def confirm_deletion(query: CallbackQuery):
+    student_id = query.from_user.id
+    if student_id != query.from_user.id:
+        return
+    elif query.data == 'cancel_deletion':
+        await query.message.answer(delete_cancelled)
+    elif query.data == 'confirm_deletion':
+        db.cur.execute("DELETE FROM Students WHERE id = ?", (student_id,))
+        db.con.commit()
+        await query.message.answer(delete_ok)
+
+
+async def pe_rubl(arguments, cmd):
     arguments = msg.text.split()
     if len(arguments) < 2:
         await msg.answer(empty_message)
         return
     old_val = arguments[1]
-    regex_val = re.compile(r'^[+-]?\d{1,2}$')
-    if not regex_val.match(old_val):
+    regex_val = r'^[+-]?\d{1,2}$'
+    if not re.match(regex_val, old_val):
         await msg.answer(wrong_format)
         return
     old_val = int(old_val)
