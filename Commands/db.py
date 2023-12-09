@@ -112,17 +112,17 @@ async def confirm_deletion(query: CallbackQuery):
         await query.message.answer(delete_ok)
 
 
-async def pe_rubl(arguments, cmd):
+async def pe_rubl(msg, cmd):
     arguments = msg.text.split()
     if len(arguments) < 2:
         await msg.answer(empty_message)
         return
-    old_val = arguments[1]
+    val_dif = arguments[1]
     regex_val = r'^[+-]?\d{1,2}$'
-    if not re.match(regex_val, old_val):
+    if not re.match(regex_val, val_dif):
         await msg.answer(wrong_format)
         return
-    old_val = int(old_val)
+    val_dif = int(val_dif)
 
     student_id = msg.from_user.id
     db.cur.execute(f'SELECT {cmd} FROM Students WHERE id = ?', (student_id,))
@@ -139,7 +139,7 @@ async def pe_rubl(arguments, cmd):
             case 'rubl':
                 await msg.answer(rubl_err)
         return
-    db.cur.execute(f'UPDATE Students SET {cmd} = ? WHERE id = ?', (old_val + dif, student_id))
+    db.cur.execute(f'UPDATE Students SET {cmd} = ? WHERE id = ?', (new_val, student_id))
     db.con.commit()
     match cmd:
         case 'pe':

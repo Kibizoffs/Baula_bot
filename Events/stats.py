@@ -35,7 +35,7 @@ async def parse_msgs(msg: Message):
 async def send_and_clear_stats():
     while True:
         now = datetime.now()
-        if now.weekday() == 4 and now.hour == 18 and now.minute == 0:
+        if now.weekday() == 6 and now.hour == 18 and now.minute == 0:
             db.cur.execute("SELECT id, gr, thread_stats FROM Groups")
             group_rows = db.cur.fetchall()
             for group_row in group_rows:
@@ -50,9 +50,12 @@ async def send_and_clear_stats():
                 group_msg_data = []
                 for student_row in student_rows:
                     msg_count_1w = student_row[1]
-                    student = await bot.get_chat(student_row[0])
-                    if msg_count_1w > 0:
-                        group_msg_data.append((msg_count_1w, student))
+                    try: 
+                        student = await bot.get_chat(student_row[0])
+                        if msg_count_1w > 0:
+                            group_msg_data.append((msg_count_1w, student))
+                    except:
+                        pass
                     
                 db.cur.execute("UPDATE Students SET msg_count_1w = 0 WHERE msg_count_1w != -1")
 
