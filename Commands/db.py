@@ -28,7 +28,7 @@ async def command_passport(msg: Message):
 async def command_edit(msg: Message):
     arguments = msg.text.split()
     if len(arguments) < 2:
-        await msg.answer(edit_txt)
+        await msg.answer(edit_txt, parse_mode='HTML')
         return
     key = arguments[1].lower()
     val = arguments[2]
@@ -81,7 +81,7 @@ async def command_register(msg: Message):
         (student_id, None, 0, 0, 0))
     db.con.commit()
     await msg.answer(register_ok)
-    await msg.answer(edit_txt)
+    await msg.answer(edit_txt, parse_mode='HTML')
 
 
 @db_router.message(Command(commands=['delete', 'remove', 'удалить']))
@@ -110,6 +110,7 @@ async def confirm_deletion(query: CallbackQuery):
         db.cur.execute("DELETE FROM Students WHERE id = ?", (student_id,))
         db.con.commit()
         await query.message.answer(delete_ok)
+    await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(inline_keyboard=[[]]))
 
 
 async def pe_rubl(msg, cmd):

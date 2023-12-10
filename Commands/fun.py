@@ -6,7 +6,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-from config import get_path
+from config import temp_path, get_path
 from main import bot
 from messages import *
 
@@ -54,9 +54,14 @@ async def command_hand(msg: Message):
         user = msg.from_user
 
     avas = await bot.get_user_profile_photos(user.id)
+    if len(avas.photos) < 1:
+        await msg.answer(no_profile_photo)
+        return
     ava_id = avas.photos[0][0].file_id
     ava = await bot.get_file(ava_id)
     temp_png_path = get_path(user.id, 'png')
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((256, 256))
@@ -79,6 +84,9 @@ async def command_hand(msg: Message):
 async def sal_get_photos(user, i, img):
     temp_png_path = get_path(user.id, 'png')
     avas = await bot.get_user_profile_photos(user.id)
+    if len(avas.photos) < 1:
+        await msg.answer(no_profile_photo)
+        return
     ava_id = avas.photos[0][0].file_id
     ava = await bot.get_file(ava_id)
     await bot.download_file(ava.file_path, temp_png_path)
@@ -107,6 +115,8 @@ async def command_sal(msg: Message):
         return
 
     img = Image.open('Media/sal.jpg')
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
     img = await sal_get_photos(user1, 1, img)
     img = await sal_get_photos(user2, 2, img)
 
@@ -139,12 +149,18 @@ async def command_trash(msg: Message):
         f'{user.username}.exe\n' +
         f"{trash_memory} {random.randint(1, 1023)}{random.choice(['kB', 'MB'])}",
         font=img_font,
-        fill=(0, 0, 0))
+        fill=(0, 0, 0)
+    )
 
     avas = await bot.get_user_profile_photos(user.id)
+    if len(avas.photos) < 1:
+        await msg.answer(no_profile_photo)
+        return
     ava_id = avas.photos[0][0].file_id
     ava = await bot.get_file(ava_id)
     temp_png_path = get_path(user.id, 'png')
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((128, 128))
@@ -152,6 +168,6 @@ async def command_trash(msg: Message):
     img.save(temp_png_path)
     img = FSInputFile(temp_png_path, filename='trash.png')
 
-    await msg.answer_photo(photo=img)
+    await msg.answer_photo(photo=img, caption=trash_text)
 
     os.remove(temp_png_path)

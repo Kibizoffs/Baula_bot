@@ -5,8 +5,10 @@ env_key_token = 'password_baula_bot'
 
 admin_ids = [280099956]
 
+temp_path = 'Temp/'
+
 def get_path(s, ext):
-    return f'Temp/{str(s)}.{ext}'
+    return f'{temp_path}{str(s)}.{ext}'
 
 class Log:
     def __init__(self):
