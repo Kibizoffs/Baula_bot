@@ -50,24 +50,33 @@ async def send_and_clear_stats():
                 group_msg_data = []
                 for student_row in student_rows:
                     msg_count_1w = student_row[1]
-                    try: 
-                        student = await bot.get_chat(student_row[0])
+                    try:
+                        student = await bot.get_chat_member(group_id, user_id=student_row[0])
                         if msg_count_1w > 0:
-                            group_msg_data.append((msg_count_1w, student))
+                            group_msg_data.append((msg_count_1w, student.user))
                     except:
                         pass
-                    
-                db.cur.execute("UPDATE Students SET msg_count_1w = 0 WHERE msg_count_1w != -1")
 
                 if len(group_msg_data) < 1:
                     await bot.send_message(chat_id=group_id, message_thread_id=thread_stats, text=no_msgs)
                     return
                 group_msg_data.sort()
-                
-                full_name = f'{student.first_name} {student.last_name}' if student.last_name else student.first_name
-                answer = (amount_of_msgs + '\n' +
-                    '\n'.join(f"{full_name}: {x[0] if x[0] < 2048 else 'MAX'}" for x in group_msg_data))
+                s = 0
+                answer = ''
+                for x in group_msg_data:
+                    student = x[1]
+                    if student.username:
+                        full_name = f'@{student.username}'
+                    else:
+                        full_name = student.first_name
+                    s += x[0]
+                    answer += full_name + f': {str(x[0])}\n'
+                answer = amount_of_msgs.format(str(s)) + answer
+
                 await bot.send_message(chat_id=group_id, message_thread_id=thread_stats, text=answer)
+
+                db.cur.execute("UPDATE Students SET msg_count_1w = 0 WHERE msg_count_1w != -1")
+                db.con.commit()
 
                 await asyncio.sleep(7 * 24 * 60 * 60)
         else:

@@ -13,7 +13,7 @@ bot_router = aiogram.Router()
 
 @bot_router.message(Command(commands=['start', 'help', 'старт', 'хелп', 'хэлп', 'помощь']))
 async def command_help(msg: Message):
-    await msg.answer(help_text)
+    await msg.answer(help_txt)
 
 @bot_router.message(Command(commands=['baula', 'баула']))
 async def command_baula(msg: Message):

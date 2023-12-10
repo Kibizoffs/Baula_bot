@@ -115,7 +115,7 @@ async def confirm_deletion(query: CallbackQuery):
 async def pe_rubl(msg, cmd):
     arguments = msg.text.split()
     if len(arguments) < 2:
-        await msg.answer(empty_message)
+        await msg.answer(empty_msg)
         return
     val_dif = arguments[1]
     regex_val = r'^[+-]?\d{1,2}$'
