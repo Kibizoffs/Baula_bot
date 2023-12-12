@@ -23,8 +23,9 @@ if __name__ == '__main__':
     from Commands.db import db_router
     from Commands.fun import fun_router
     from Commands.special import special_router
+    from Events.messages import messages_router
     dp.include_routers(
-        admin_router, bot_router,
-        db_router, fun_router, special_router)
+        admin_router, bot_router, db_router,
+        fun_router, special_router, messages_router)
     asyncio.run(main())
 

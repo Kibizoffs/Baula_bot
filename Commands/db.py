@@ -188,7 +188,7 @@ async def pe_rubl(msg: Message):
     if len(arguments) < 2:
         await msg.answer(empty_msg)
         return
-    cmd = arguments[0]
+    cmd = arguments[0][1:]
     val_dif = arguments[1]
     regex_val = r'^[+-]?\d{1,2}$'
     if not re.match(regex_val, val_dif):
@@ -202,8 +202,11 @@ async def pe_rubl(msg: Message):
     if not res:
         await msg.answer(not_yet_registered)
         return
+    elif cmd == 'pe' and not res[0]:
+        await msg.answer(not_in_group)
+        return
     elif cmd == 'rubl' and res[0] not in rubl_prac_groups:
-        await msg.answer(not_in_107_108)
+        await msg.answer(not_in_rubl_prac_group)
         return
 
     elif res[1] == None:

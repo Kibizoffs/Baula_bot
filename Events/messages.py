@@ -7,6 +7,9 @@ from config import db
 from main import bot
 from vars import *
 
+messages_router = aiogram.Router()
+
+@messages_router.message()
 async def parse_msg(msg: Message):
     time_threshold = datetime.now() - timedelta(minutes=1)
     if msg.date.timestamp() < time_threshold.timestamp():
@@ -17,7 +20,7 @@ async def parse_msg(msg: Message):
 
     db.cur.execute("SELECT gr, thread_stats FROM Groups WHERE id = ?", (group_id,))
     res = db.cur.fetchone()
-    if not res or not res[1]:
+    if not res or res[1] == None:
         return
     gr = res[0]
 
@@ -26,7 +29,7 @@ async def parse_msg(msg: Message):
     if not res:
         return
     old_msg_count_1w = res[0]
-    if not old_msg_count_1w:
+    if old_msg_count_1w == None:
         return
 
     new_msg_count_1w = old_msg_count_1w + 1
@@ -39,11 +42,11 @@ async def send_and_clear_stats():
     while True:
         now = datetime.now()
         if now.weekday() == 4 and now.hour == 18 and now.minute == 0:
-            db.cur.execute("SELECT id, gr, thread_stats FROM Groups")
+            db.cur.execute("SELECT gr, id, thread_stats FROM Groups")
             group_rows = db.cur.fetchall()
             for group_row in group_rows:
-                group_id = group_row[0]
-                gr = group_row[1]
+                gr = group_row[0]
+                group_id = group_row[1]
                 thread_stats = group_row[2]
                 if not thread_stats:
                     return
