@@ -1,41 +1,44 @@
 import aiogram
 import asyncio
 from aiogram.types import Message
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from config import db
 from main import bot
-from messages import *
+from vars import *
 
-stats_router = aiogram.Router()
+async def parse_msg(msg: Message):
+    time_threshold = datetime.now() - timedelta(minutes=1)
+    if msg.date.timestamp() < time_threshold.timestamp():
+        return
 
-@stats_router.message()
-async def parse_msgs(msg: Message):
-    student_id = msg.from_user.id
+    user_id = msg.from_user.id
     group_id = msg.chat.id
 
     db.cur.execute("SELECT gr, thread_stats FROM Groups WHERE id = ?", (group_id,))
-    group_row = db.cur.fetchone()
-    if not group_row or not group_row[1]:
+    res = db.cur.fetchone()
+    if not res or not res[1]:
         return
-    gr = group_row[0]
+    gr = res[0]
 
-    db.cur.execute("SELECT msg_count_1w FROM Students WHERE id = ? AND gr = ?", (student_id, gr))
-    student_row = db.cur.fetchone()
-    if not student_row:
+    db.cur.execute("SELECT msg_count_1w FROM Students WHERE id = ? AND gr = ?", (user_id, gr))
+    res = db.cur.fetchone()
+    if not res:
         return
-    old_msg_count_1w = student_row[0]
+    old_msg_count_1w = res[0]
+    if not old_msg_count_1w:
+        return
 
     new_msg_count_1w = old_msg_count_1w + 1
     if new_msg_count_1w > 2048:
         return
-    db.cur.execute("UPDATE Students SET msg_count_1w = ? WHERE id = ?", (new_msg_count_1w, student_id))
+    db.cur.execute("UPDATE Students SET msg_count_1w = ? WHERE id = ?", (new_msg_count_1w, user_id))
     db.con.commit()
 
 async def send_and_clear_stats():
     while True:
         now = datetime.now()
-        if now.weekday() == 6 and now.hour == 18 and now.minute == 0:
+        if now.weekday() == 4 and now.hour == 18 and now.minute == 0:
             db.cur.execute("SELECT id, gr, thread_stats FROM Groups")
             group_rows = db.cur.fetchall()
             for group_row in group_rows:
@@ -50,32 +53,33 @@ async def send_and_clear_stats():
                 group_msg_data = []
                 for student_row in student_rows:
                     msg_count_1w = student_row[1]
+                    if msg_count_1w == None:
+                        continue
                     try:
                         student = await bot.get_chat_member(group_id, user_id=student_row[0])
-                        if msg_count_1w > 0:
-                            group_msg_data.append((msg_count_1w, student.user))
+                        group_msg_data.append((msg_count_1w, student.user))
                     except:
                         pass
 
                 if len(group_msg_data) < 1:
-                    await bot.send_message(chat_id=group_id, message_thread_id=thread_stats, text=no_msgs)
                     return
+
                 group_msg_data.sort()
                 s = 0
                 answer = ''
-                for x in group_msg_data:
-                    student = x[1]
-                    if student.username:
-                        full_name = f'@{student.username}'
+                for member in group_msg_data:
+                    user = x[1]
+                    if user.username:
+                        full_name = f'@{user.username}'
                     else:
-                        full_name = student.first_name
+                        full_name = user.first_name
                     s += x[0]
-                    answer += full_name + f': {str(x[0])}\n'
+                    answer += (full_name + f': {str(x[0])}\n')
                 answer = amount_of_msgs.format(str(s)) + answer
 
                 await bot.send_message(chat_id=group_id, message_thread_id=thread_stats, text=answer)
 
-                db.cur.execute("UPDATE Students SET msg_count_1w = 0 WHERE msg_count_1w != -1")
+                db.cur.execute(f'UPDATE Students SET msg_count_1w = 0 WHERE gr = {gr} AND msg_count_1w != NULL')
                 db.con.commit()
 
                 await asyncio.sleep(7 * 24 * 60 * 60)

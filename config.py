@@ -5,10 +5,7 @@ env_key_token = 'password_baula_bot'
 
 admin_ids = [280099956]
 
-temp_path = 'Temp/'
-
-def get_path(s, ext):
-    return f'{temp_path}{str(s)}.{ext}'
+temp_path = 'Temp'
 
 class Log:
     def __init__(self):
@@ -24,6 +21,5 @@ class DB:
         self.max_size = 2560
         self.file_path = 'db.sqlite'
         self.con = sqlite3.connect(self.file_path)
-        self.cur = self.con.cursor()
-        
+        self.cur = self.con.cursor() 
 db = DB()

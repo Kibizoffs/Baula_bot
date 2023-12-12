@@ -6,14 +6,17 @@ import qrcode
 import io
 import os
 import re
-import subprocess
 import shlex
+import subprocess
+from sympy import solve, sympify
 from PIL import Image, ImageDraw, ImageFont
+from urllib.parse import quote
 import yt_dlp
 
-from config import get_path
+from Events.messages import parse_msg
 from main import bot
-from messages import *
+from utils import *
+from vars import *
 
 special_router = aiogram.Router()
 
@@ -22,7 +25,6 @@ async def command_qr(msg: Message):
     if len(msg.text.split()) < 2:
         await msg.answer(empty_msg)
         return
-
     text = ' '.join(x for x in msg.text.split()[1:])
 
     qr = qrcode.QRCode(border=1)
@@ -38,24 +40,46 @@ async def command_qr(msg: Message):
         caption=f'{qr_ok}\n{text}'
     )
 
-    os.remove(qr_image_path)
+    os.remove(temp_qr_img_path)
 
-@special_router.message(Command(commands=['yt', 'ютуб']))
+@special_router.message(Command(commands=['yt', 'ютуб', 'ютьуб']))
 async def command_yt(msg: Message):
     if len(msg.text.split()) < 2:
         await msg.answer(empty_msg)
         return
 
-    yt_opts = {}
-    yt = yt_dlp.YoutubeDL(yt_opts)
-
-    video_url = shlex.quote(msg.text.split()[1].split('?')[0])
-    regex_url = r'^(https?:\/\/)?(www\.)?((youtube\.com\/watch\?v=)|(youtu\.be\/))([\w-]+)$'
+    # ПОТЕНЦИАЛЬНО ОПАСНЫЙ КОД. ТРЕБУЕТСЯ МАКСИМУМ ЗАЩИТЫ
+    video_url = shlex.quote(msg.text.split()[1])[1:-1]
+    video_url = video_url.replace('youtube.com/watch?v=', 'youtu.be/').split('?')[0]
+    regex_url = r'^(https?:\/\/)?(www\.)?(youtu\.be\/)([\w-]+)$'
     if not re.match(regex_url, video_url):
         await msg.answer(yt_bad_url)
         return
 
+    yt_opts = {}
+    yt = yt_dlp.YoutubeDL(yt_opts)
     yt_dlp_command = ['yt-dlp', '-g', video_url]
     download_url = subprocess.check_output(yt_dlp_command, shell=False).decode('utf-8').strip()        
 
-    await msg.answer(f"{yt_ok}\n<a href='{download_url}'>Скачать</a>", parse_mode='HTML')
+    await msg.answer(f"{yt_ok}\n<a href='{download_url}'>{yt_download}</a>", parse_mode='HTML')
+
+@special_router.message(Command(commands=['math', 'математика']))
+async def command_math(msg: Message):
+    if len(msg.text.split()) < 2:
+        await msg.answer(empty_msg)
+        return
+    expression = ' '.join(x for x in msg.text.split()[1:])
+    if expression == '':
+        await msg.answer(empty_msg)
+        return
+
+    try:
+        result = sympify(expression).evalf()
+    except Exception:
+        await msg.answer(math_cant_parse)
+        return
+    url = 'https://www.wolframalpha.com/input?i=' + quote(expression)
+    await msg.answer(
+        text=math_result.format(result, url),
+        parse_mode='HTML',
+        disable_web_page_preview=True)

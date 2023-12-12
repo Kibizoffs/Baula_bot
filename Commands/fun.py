@@ -6,9 +6,10 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import random
 
-from config import temp_path, get_path
+from Events.messages import parse_msg
 from main import bot
-from messages import *
+from utils import *
+from vars import *
 
 fun_router = aiogram.Router()
 
@@ -22,8 +23,7 @@ def hand_frames(ava):
     shake_y_amp = 4
     c = 4
     hand_frames = [
-        Image.open(f"Media/Hand/frame{i+1}.png")
-        for i in range(4)]
+        Image.open(path_hand.format(str(i+1))) for i in range(4)]
     frames = []
     for i in range(c):
         frame = Image.new("RGBA", (256, 256), (0, 0, 0, 1))
@@ -48,7 +48,7 @@ async def command_hand(msg: Message):
         try:
             user = (await bot.get_chat_member(msg.chat.id, user_id=user_id)).user
         except:
-            await msg.answer(trash_optional_arg)
+            await msg.answer(trash_no_user)
             return
     else:
         user = msg.from_user
@@ -60,8 +60,6 @@ async def command_hand(msg: Message):
     ava_id = avas.photos[0][0].file_id
     ava = await bot.get_file(ava_id)
     temp_png_path = get_path(user.id, 'png')
-    if not os.path.exists(temp_path):
-        os.makedirs(temp_path)
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((256, 256))
@@ -73,7 +71,7 @@ async def command_hand(msg: Message):
         save_all=True,
         append_images=frames[1:],
         duration=60)
-    gif = FSInputFile(temp_gif_path, filename='pat.gif')
+    gif = FSInputFile(path=temp_gif_path, filename=filename_hand)
 
     await msg.answer_animation(gif)
 
@@ -92,8 +90,10 @@ async def sal_get_photos(user, i, img):
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((128, 128))
-    if i == 1: img.paste(ava, (128, 0))
-    elif i == 2: img.paste(ava, (128, 128))
+    if i == 1:
+        img.paste(ava, (128, 0))
+    elif i == 2:
+        img.paste(ava, (128, 128))
     ava.close()
     os.remove(temp_png_path)
     return img
@@ -114,16 +114,14 @@ async def command_sal(msg: Message):
         await msg.answer(sal_2_arguments)
         return
 
-    img = Image.open('Media/sal.jpg')
-    if not os.path.exists(temp_path):
-        os.makedirs(temp_path)
+    img = Image.open(path_salnikov)
     img = await sal_get_photos(user1, 1, img)
     img = await sal_get_photos(user2, 2, img)
 
     temp_png_path = get_path(f'{user1.id}_{user2.id}', 'png')
     img.save(temp_png_path)
-    img = FSInputFile(temp_png_path, filename='salnikov.png')
-
+    
+    img = FSInputFile(temp_png_path, filename=filename_salnikov)
     await msg.answer_photo(photo=img)
 
     os.remove(temp_png_path)
@@ -136,12 +134,12 @@ async def command_trash(msg: Message):
         try:
             user = (await bot.get_chat_member(msg.chat.id, user_id=user_id)).user
         except:
-            await msg.answer(trash_optional_arg)
+            await msg.answer(trash_no_user)
             return
     else:
         user = msg.from_user
 
-    img = Image.open('Media/trash.jpg')
+    img = Image.open(path_trash)
     img_draw = ImageDraw.Draw(img)
     img_font = ImageFont.truetype("Fonts/arial.ttf", 18)
     img_draw.text(
@@ -159,14 +157,12 @@ async def command_trash(msg: Message):
     ava_id = avas.photos[0][0].file_id
     ava = await bot.get_file(ava_id)
     temp_png_path = get_path(user.id, 'png')
-    if not os.path.exists(temp_path):
-        os.makedirs(temp_path)
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((128, 128))
     img.paste(ava, (72, 75))
     img.save(temp_png_path)
-    img = FSInputFile(temp_png_path, filename='trash.png')
+    img = FSInputFile(temp_png_path, filename=filename_hand)
 
     await msg.answer_photo(photo=img, caption=trash_text)
 
