@@ -5,18 +5,23 @@ from config import log
 
 def _setup_logger():
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO) # общий уровень отладки
+    level = logging.DEBUG # уровень отладки
+    logger.setLevel(level)
 
-    fileHandler = RotatingFileHandler(
-        filename=log.file_path, maxBytes=log.max_size, backupCount=log.backup_count)
-    fileHandler.setLevel(logging.INFO) # уровень отладки файла
-    fileHandler.setFormatter(log.file_format)
-    logger.addHandler(fileHandler)
+    # отладка в файл
+    file_handler = RotatingFileHandler(
+        filename=log.file_path,
+        maxBytes=log.max_size,
+        backupCount=log.backup_count)
+    file_handler.setLevel(level)
+    file_handler.setFormatter(log.file_format)
+    logger.addHandler(file_handler)
 
-    streamHandler = logging.StreamHandler() # уровень отладки в консоли
-    streamHandler.setLevel(logging.INFO)
-    streamHandler.setFormatter(log.stream_format)
-    logger.addHandler(streamHandler)
+    # отладка в консоль
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(log.stream_format)
+    stream_handler.setLevel(level)
+    logger.addHandler(stream_handler)
 
     return logger
 

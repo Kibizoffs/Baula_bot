@@ -4,7 +4,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 import re
 
 from Events.messages import parse_msg
-from config import db
+from config import *
 from main import bot
 from vars import *
 
@@ -15,7 +15,7 @@ async def command_chat(msg: Message):
     await parse_msg(msg)
 
     chat = msg.chat
-    db.cur.execute("SELECT gr FROM Groups WHERE id = ?", (chat.id,))
+    db.cur.execute(f'SELECT gr FROM Groups WHERE {id_key} = ?', (chat.id,))
     res = db.cur.fetchone()
     gr = chat_passport_gr.format(NIL)
     if res:
@@ -38,7 +38,7 @@ async def command_passport(msg: Message):
         id_key, gr_key, last_name_key,
         pe_key, rubl_key, msg_count_1w_key
     ]
-    db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE id = ?", (user_id,))
+    db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE {id_key} = ?", (user_id,))
     res = db.cur.fetchone()
     gr = ''
     last_name = ''
@@ -82,12 +82,11 @@ async def command_edit(msg: Message):
         
     user_id = msg.from_user.id
     select_columns = [
-        gr_key, last_name_key
-    ]
-    db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE id = ?", (user_id,))
+        gr_key, last_name_key]
+    db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE {id_key} = ?", (user_id,))
     result = db.cur.fetchone()
     if not result:
-        await msg.answer(not_yet_registered)
+        await msg.answer(register_not_yet)
         return
 
     found = False
@@ -99,28 +98,23 @@ async def command_edit(msg: Message):
                 val = None
             else:
                 if key == 'gr':
-                    regex_gr = r'^\d{3}$'
-                    if not re.match(regex_gr, val):
-                        await msg.answer(edit_wrong_gr_format)
-                        return
-
                     val = int(val)
-                    db.cur.execute(f"SELECT * FROM Groups WHERE gr = ?", (val,))
+                    db.cur.execute(f'SELECT * FROM Groups WHERE {gr_key} = ?', (val,))
                     result = db.cur.fetchone()
                     if not result:
                         await msg.answer(edit_group_doesnt_exist)
                         return
-                    elif val in rubl_prac_groups:
-                        db.cur.execute(f'UPDATE Students SET pe = 0, rubl = 0, msg_count_1w = 0 WHERE id = ?', (user_id,))
+                    elif val in baula_rubl_sal_groups:
+                        db.cur.execute(f'UPDATE Students SET {pe_key} = 0, {baula_key} = 0, {rubl_key} = 0, {sal_key} = 0, {msg_count_1w_key} = 0 WHERE {id_key} = ?', (user_id,))
 
                 elif key == 'last_name':
-                    regex_last_name = r'^[А-я,-]+$'
+                    regex_last_name = r'^[А-яЁё\-]+$'
                     if not re.match(regex_last_name, val):
                         await msg.answer(edit_wrong_last_name_format)
                         return
                     val = val.title()
 
-            db.cur.execute(f'UPDATE Students SET {key} = ? WHERE id = ?', (val, user_id))
+            db.cur.execute(f'UPDATE Students SET {key} = ? WHERE {id_key} = ?', (val, user_id))
             db.con.commit()
             await msg.answer(edit_updated)
             break
@@ -134,13 +128,13 @@ async def command_register(msg: Message):
     await parse_msg(msg)
 
     user_id = msg.from_user.id
-    db.cur.execute("SELECT * FROM Students WHERE id = ?", (user_id,))
+    db.cur.execute(f'SELECT * FROM Students WHERE {id_key} = ?', (user_id,))
     result = db.cur.fetchone()
     if result:
-        await msg.answer(already_registered)
+        await msg.answer(register_already)
         return
 
-    db.cur.execute("INSERT INTO Students (id) VALUES (?)", (user_id,))
+    db.cur.execute(f'INSERT INTO Students ({id_key}) VALUES (?)', (user_id,))
     db.con.commit()
     await msg.answer(
         text=
@@ -155,10 +149,10 @@ async def command_delete(msg: Message):
     await parse_msg(msg)
     
     user_id = msg.from_user.id
-    db.cur.execute("SELECT * FROM Students WHERE id = ?", (user_id,))
+    db.cur.execute(f'SELECT * FROM Students WHERE {id_key} = ?', (user_id,))
     result = db.cur.fetchone()
     if not result:
-        await msg.answer(not_yet_registered)
+        await msg.answer(register_not_yet)
         return
 
     cancel_button = InlineKeyboardButton(text="❌", callback_data="cancel_deletion")
@@ -173,7 +167,7 @@ async def confirm_deletion(query: CallbackQuery):
     if query.data == 'cancel_deletion':
         await query.message.answer(delete_cancelled)
     elif query.data == 'confirm_deletion':
-        db.cur.execute("DELETE FROM Students WHERE id = ?", (user_id,))
+        db.cur.execute(f'DELETE FROM Students WHERE {id_key} = ?', (user_id,))
         db.con.commit()
         await query.message.answer(delete_ok.format(FATAL_ERROR))
 
@@ -192,27 +186,27 @@ async def pe_rubl(msg: Message):
     val_dif = arguments[1]
     regex_val = r'^[+-]?\d{1,2}$'
     if not re.match(regex_val, val_dif):
-        await msg.answer(pe_rubl_bad_nums)
+        await msg.answer(bad_nums)
         return
     val_dif = int(val_dif)
 
     user_id = msg.from_user.id
-    db.cur.execute(f'SELECT {gr_key}, {cmd} FROM Students WHERE id = ?', (user_id,))
+    db.cur.execute(f'SELECT {gr_key}, {cmd} FROM Students WHERE {id_key} = ?', (user_id,))
     res = db.cur.fetchone()
     if not res:
-        await msg.answer(not_yet_registered)
+        await msg.answer(register_not_yet)
         return
     elif cmd == 'pe' and not res[0]:
         await msg.answer(not_in_group)
         return
-    elif cmd == 'rubl' and res[0] not in rubl_prac_groups:
+    elif cmd == 'rubl' and res[0] not in baula_rubl_sal_groups:
         await msg.answer(not_in_rubl_prac_group)
         return
-
     elif res[1] == None:
         old_val = 0
     else:
         old_val = res[1]
+
     new_val = old_val + val_dif
     if new_val > 100:
         await msg.answer(pe_rubl_overflow)
@@ -220,7 +214,7 @@ async def pe_rubl(msg: Message):
     elif new_val < 0:
         new_val = 0
 
-    db.cur.execute(f'UPDATE Students SET {cmd} = ? WHERE id = ?', (new_val, user_id))
+    db.cur.execute(f'UPDATE Students SET {cmd} = ? WHERE {id_key} = ?', (new_val, user_id))
     db.con.commit()
     match cmd:
         case 'pe':

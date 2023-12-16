@@ -3,7 +3,6 @@ import asyncio
 import os
 
 from config import env_key_token
-from logger import logger
 from utils import get_time
 
 start_time = get_time()
@@ -14,8 +13,7 @@ async def main():
     from Events.messages import send_and_clear_stats
     await asyncio.gather(
         dp.start_polling(bot),
-        send_and_clear_stats()
-    )
+        send_and_clear_stats())
 
 if __name__ == '__main__':
     from Commands.admin import admin_router

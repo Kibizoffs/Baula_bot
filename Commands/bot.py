@@ -1,11 +1,10 @@
 import aiogram
 from aiogram.filters import Command
-from aiogram.types import \
-    Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import (
+    Message, ReplyKeyboardMarkup, KeyboardButton)
 from platform import system
 
 from Events.messages import parse_msg
-from config import admin_ids
 from main import bot, start_time
 from vars import *
 from utils import *
@@ -43,10 +42,13 @@ async def command_feedback(msg: Message):
     if len(msg.text.split()) < 2:
         await msg.answer(empty_msg)
         return
-    for admin_id in admin_ids:
+    db.cur.execute(f'SELECT {id_key} FROM Students WHERE {admin_key} = ?', (1,))
+    res = db.cur.fetchall()
+    for admin in res:
         try:
             user = msg.from_user
             name = f'@{user.username}' if user.username else user.id
+            admin_id = admin[0]
             await bot.send_message(
                 chat_id=admin_id,
                 text=(

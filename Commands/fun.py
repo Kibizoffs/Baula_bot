@@ -43,6 +43,8 @@ def hand_frames(ava):
 
 @fun_router.message(Command(commands=['hand', 'рука']))
 async def command_hand(msg: Message):
+    await parse_msg(msg)
+
     if len(msg.text.split()) > 1:
         user_id = msg.text.split()[1]
         try:
@@ -90,18 +92,17 @@ async def sal_get_photos(user, i, img):
     await bot.download_file(ava.file_path, temp_png_path)
     ava = Image.open(temp_png_path)
     ava = ava.resize((128, 128))
-    if i == 1:
-        img.paste(ava, (128, 0))
-    elif i == 2:
-        img.paste(ava, (128, 128))
+    if i == 1: img.paste(ava, (128, 0))
+    elif i == 2: img.paste(ava, (128, 128))
     ava.close()
     os.remove(temp_png_path)
     return img
 
 @fun_router.message(Command(commands=['sal', 'salnikov', 'сал', 'сальников']))
 async def command_sal(msg: Message):
-    args = msg.text.split()
+    await parse_msg(msg)
 
+    args = msg.text.split()
     if len(args) < 3:
         await msg.answer(sal_2_arguments)
         return
@@ -111,7 +112,7 @@ async def command_sal(msg: Message):
         user1 = (await bot.get_chat_member(msg.chat.id, user_id=user1_id)).user
         user2 = (await bot.get_chat_member(msg.chat.id, user_id=user2_id)).user
     except:
-        await msg.answer(sal_2_arguments)
+        await msg.answer(no_user)
         return
 
     img = Image.open(path_salnikov)
@@ -129,12 +130,14 @@ async def command_sal(msg: Message):
 
 @fun_router.message(Command(commands=['trash', 'мусор']))
 async def command_trash(msg: Message):
+    await parse_msg(msg)
+
     if len(msg.text.split()) > 1:
         user_id = msg.text.split()[1]
         try:
             user = (await bot.get_chat_member(msg.chat.id, user_id=user_id)).user
         except:
-            await msg.answer(trash_no_user)
+            await msg.answer(no_user)
             return
     else:
         user = msg.from_user
@@ -162,8 +165,8 @@ async def command_trash(msg: Message):
     ava = ava.resize((128, 128))
     img.paste(ava, (72, 75))
     img.save(temp_png_path)
-    img = FSInputFile(temp_png_path, filename=filename_hand)
 
+    img = FSInputFile(temp_png_path, filename=filename_hand)
     await msg.answer_photo(photo=img, caption=trash_text)
 
     os.remove(temp_png_path)

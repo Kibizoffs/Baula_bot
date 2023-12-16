@@ -1,55 +1,38 @@
-# самое ироничное
+from config import *
+
 FATAL_ERROR = 'FATAL ERROR'
 NIL = 'nil'
 OSTANOV = 'ОСТАНОВ: '
 
-# ключи в БД
-id_key = 'id'
-gr_key = 'gr'
-last_name_key = 'last_name'
-pe_key = 'pe'
-rubl_key = 'rubl'
-msg_count_1w_key = 'msg_count_1w'
-
-# группы
-rubl_prac_groups = [107, 108]
-
-amount_of_msgs = 'Кол-во сообщений в группе за эту неделю: 😲{}😛\n'
+amount_of_msgs = 'Кол-во сообщений в группе за эту неделю: {}\n'
 
 too_long_msg = f'{OSTANOV}слишком длинная string 😐'
 empty_msg = f'{OSTANOV}nil сообщение 😂'
+bad_nums = f'{OSTANOV}плохие числа 🥺'
 edit_updated = 'Значение была обновлена 😎'
 edit_key_not_found = f'{OSTANOV}ключ не была найдена 😔'
-edit_wrong_gr_format = f'{OSTANOV}плохой формат группы 🥵. 3 циферки написать не можешь?'
-edit_group_doesnt_exist = f"""{OSTANOV} эта группа не была найдена.\nДоступные: {', '.join(f"'{str(x)}'" for x in rubl_prac_groups)}"""
+edit_group_doesnt_exist = f"""{OSTANOV} эта группа не была найдена.\nДоступные: {', '.join(f"'{str(x)}'" for x in baula_rubl_sal_groups)}"""
 edit_wrong_last_name_format = f'{OSTANOV}плохой формат фамилии 🤬. Только кириллица!'
-already_registered = f'{OSTANOV}ты уже зарегистрирована 🥴'
+register_already = f'{OSTANOV}ты уже зарегистрирована 🥴'
 register_ok = 'Регистрация прошла успешно 🤪\n'
-not_yet_registered = f'{OSTANOV}ты ещё не была зарегистрирована 😵'
+register_not_yet = f'{OSTANOV}ты ещё не была зарегистрирована 😵'
 delete_confirm = 'Подтвердите удаление 🙁'
 delete_cancelled = 'Удаление была отменена 🥰'
 delete_ok = 'Удаление прошла успешно 🖕\n(да пребудет с тобой... {})'
 not_in_group = F"{OSTANOV}ты не в группе. Присвой значение к ключу 'gr' через /edit 🤓"
 not_in_rubl_prac_group = f'{OSTANOV}ты не в 107-ой или 108-ой группе. Шуруй отсюда 😝'
-pe_rubl_bad_nums = f'{OSTANOV}плохие числа 🥺'
 pe_rubl_large_nums = f'{OSTANOV}переполнение 😱'
 pe_ok = 'Было: {} ⚽\nСтало: {} ⚽'
 rubl_ok = 'Было: {}₽\nСтало: {}₽'
 
-path_hand = 'Media/Hand/frame{}.png'
-path_salnikov = 'Media/salnikov.jpg'
-path_trash = 'Media/trash.jpg'
-filename_hand = 'hand.gif'
-filename_salnikov = 'salnikov.jpg'
-filename_trash = 'trash.jpg'
-
+no_user = f'{OSTANOV}юзер не был найден 😯'
 no_profile_photo = f'{OSTANOV}поставь фото на аву (А.Н.Сальникову срочно нужно) 😫'
 sal_2_arguments = f'{OSTANOV}укажи 2 юзер ID 😤'
-trash_no_user = f'{OSTANOV}юзер не был найден 😯'
 trash_memory = 'Память:'
 trash_text = 'Сборщик мусора ПАСКАЛЬ-МАШИНЫ обнаружила эту нечисть 😬'
 
-qr_ok = 'КУАР-код по запросу:'
+qr_ok = 'QR-код по запросу:'
+qr_cant_generate = f'{OSTANOV}не смог быть сгенерирован 🥶'
 yt_bad_url = f'{OSTANOV}плохая ссылка 🙄'
 yt_ok = 'ютЬюб видео по запросу:'
 yt_download = 'Скачать'
