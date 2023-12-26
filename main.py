@@ -11,9 +11,11 @@ dp = aiogram.Dispatcher()
 
 async def main():
     from Events.messages import send_and_clear_stats
+    from Events.google_sheets import get_google_sheets
     await asyncio.gather(
         dp.start_polling(bot),
-        send_and_clear_stats())
+        send_and_clear_stats(),
+        get_google_sheets())
 
 if __name__ == '__main__':
     from Commands.admin import admin_router

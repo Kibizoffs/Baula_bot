@@ -36,21 +36,26 @@ async def command_passport(msg: Message):
     user_id = msg.from_user.id
     select_columns = [
         id_key, gr_key, last_name_key,
-        pe_key, rubl_key, msg_count_1w_key
+        pe_key, baula_key, rubl_key, sal_key,
+        msg_count_1w_key
     ]
     db.cur.execute(f"SELECT {', '.join(x for x in select_columns)} FROM Students WHERE {id_key} = ?", (user_id,))
     res = db.cur.fetchone()
     gr = ''
     last_name = ''
     pe = ''
+    baula = ''
     rubl = ''
+    sal = ''
     msg_count_1w = ''
     if res:
         if res[1] != None: gr = chat_passport_gr.format(res[1])
         if res[2] != None: last_name = passport_last_name.format(res[2])
         if res[3] != None: pe = passport_pe.format(res[3])
-        if res[4] != None: rubl = passport_rubl.format(res[4])
-        if res[5] != None: msg_count_1w = passport_msg_count_1w.format(res[5])
+        if res[4] != None: baula = passport_baula.format(res[4])
+        if res[4] != None: rubl = passport_rubl.format(res[5])
+        if res[4] != None: sal = passport_sal.format(res[6])
+        if res[5] != None: msg_count_1w = passport_msg_count_1w.format(res[7])
 
     await msg.answer(
         text=
@@ -58,7 +63,9 @@ async def command_passport(msg: Message):
             gr +
             last_name.format(last_name) +
             pe.format(pe) +
+            baula.format(baula) +
             rubl.format(rubl) +
+            sal.format(sal) +
             msg_count_1w.format(msg_count_1w),
         parse_mode='HTML'
     )

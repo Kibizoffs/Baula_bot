@@ -1,8 +1,10 @@
 import aiogram
 from aiogram.filters import Command
 from aiogram.types import Message
+import re
 
 from Events.messages import parse_msg
+from config import *
 from main import bot
 
 admin_router = aiogram.Router()
@@ -27,8 +29,5 @@ async def command_say(msg: Message):
         pass
     
     if len(msg.text.split()) < 2:
-        await msg.answer(empty_msg)
         return
-    await msg.answer(
-        text=' '.join(fr'{x}' for x in msg.text.split()[1:]),
-        parse_mode='HTML')
+    await msg.answer(re.sub(r'^\S*\s', '', msg.text))

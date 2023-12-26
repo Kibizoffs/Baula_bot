@@ -1,7 +1,9 @@
 from logging import Formatter
+import os
 import sqlite3
 
 env_key_token = 'password_baula_bot'
+env_key_googlesheets = 'password_google_sheets'
 
 class Log:
     def __init__(self):
@@ -30,8 +32,9 @@ msg_count_1w_key = 'msg_count_1w'
 admin_key = 'admin'
 banned_key = 'banned'
 thread_stats_key = 'thread_stats'
-thread_mathhedgehog = 'thread_mathhedgehog'
-thread_profkomvmk = 'thread_profkomvmk'
+thread_mathhedgehog_key = 'thread_mathhedgehog'
+thread_profkomvmk_key = 'thread_profkomvmk'
+baula_sal_key = 'baula_sal'
 
 stats_weekday = 4
 stats_hour = 18

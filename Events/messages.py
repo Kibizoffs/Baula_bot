@@ -58,19 +58,20 @@ async def parse_msg(msg: Message):
     time_threshold = current_time - timedelta(minutes=1)
     if msg.date.timestamp() < time_threshold.timestamp():
         return
-
+    
     if msg.text.startswith('/'):
-        logger.info(
-            f'User ID: {user_id}\n' +
-            f'Chat ID: {chat_id}\n' +
-            f'Text: {msg.text}\n'
-        )
+        s = (f'\nChat ID: {chat_id}\n' +
+        f'Command: {msg.text.split()[0]}\n')
+        if chat_id != user_id:
+            s += f'User ID: {user_id}\n'
+
+        logger.info(s)
 
 async def send_and_clear_stats():
     while True:
         now = datetime.now()
         if now.weekday() == stats_weekday and now.hour == stats_hour and now.minute == stats_minute:
-            db.cur.execute(f"SELECT {''.join(x for x in [gr_key, id_key, thread_stats_key])} FROM Groups")
+            db.cur.execute(f"SELECT {', '.join(x for x in [gr_key, id_key, thread_stats_key])} FROM Groups")
             group_rows = db.cur.fetchall()
             for group_row in group_rows:
                 gr = group_row[0]
@@ -79,7 +80,7 @@ async def send_and_clear_stats():
                 if not thread_stats:
                     return
 
-                db.cur.execute(f"SELECT {''.join(x for x in [id_key, msg_count_1w_key])} FROM Students WHERE {gr_key} = ?", (gr,))
+                db.cur.execute(f"SELECT {', '.join(x for x in [id_key, msg_count_1w_key])} FROM Students WHERE {gr_key} = ?", (gr,))
                 student_rows = db.cur.fetchall()
                 group_msg_data = []
                 for student_row in student_rows:
@@ -95,7 +96,7 @@ async def send_and_clear_stats():
                 if len(group_msg_data) < 1:
                     return
 
-                group_msg_data.sort(key, reverse=True)
+                group_msg_data.sort(reverse=True)
                 s = 0
                 answer = ''
                 for member in group_msg_data:
@@ -111,7 +112,8 @@ async def send_and_clear_stats():
                 await bot.send_message(
                     chat_id=group_id,
                     message_thread_id=thread_stats,
-                    text=answer)
+                    text=answer,
+                    parse_mode='HTML')
 
                 db.cur.execute(f'UPDATE Students SET {msg_count_1w_key} = 0 WHERE {gr_key} = {gr}')
                 db.con.commit()
