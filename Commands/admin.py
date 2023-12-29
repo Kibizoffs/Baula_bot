@@ -6,6 +6,7 @@ import re
 from Events.messages import parse_msg
 from config import *
 from main import bot
+from vars import *
 
 admin_router = aiogram.Router()
 
@@ -30,4 +31,14 @@ async def command_say(msg: Message):
     
     if len(msg.text.split()) < 2:
         return
-    await msg.answer(re.sub(r'^\S*\s', '', msg.text))
+    await msg.answer(stop_baula)
+
+@admin_router.message(Command(commands=['stop', 'стоп']))
+async def command_stop(msg: Message):
+    await parse_msg(msg)
+
+    if not is_admin(msg.from_user.id):
+        return
+    
+    await msg.answer(stop_baula)
+    exit()

@@ -19,8 +19,11 @@ async def get_google_sheets():
                 'key': os.getenv(env_key_googlesheets)
             }
             async with httpx.AsyncClient() as client:
-                response = await client.get(url, params=params)
-                if response.status_code != 200:
+                try:
+                    response = await client.get(url, params=params)
+                    if response.status_code != 200:
+                        raise Exception
+                except:
                     print("ERR: Didn't manage to fetch: ", url)
                     continue
                 data = response.json()

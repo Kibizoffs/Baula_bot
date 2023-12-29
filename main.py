@@ -9,7 +9,7 @@ start_time = get_time()
 bot = aiogram.Bot(token=os.getenv(env_key_token))
 dp = aiogram.Dispatcher()
 
-async def main():
+async def async_main():
     from Events.messages import send_and_clear_stats
     from Events.google_sheets import get_google_sheets
     await asyncio.gather(
@@ -27,5 +27,5 @@ if __name__ == '__main__':
     dp.include_routers(
         admin_router, bot_router, db_router,
         fun_router, special_router, messages_router)
-    asyncio.run(main())
+    asyncio.run(async_main())
 

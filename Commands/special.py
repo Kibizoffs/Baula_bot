@@ -1,7 +1,6 @@
 import aiogram
 from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile
-from googletrans import Translator
 import qrcode
 import io
 import os

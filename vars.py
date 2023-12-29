@@ -1,3 +1,5 @@
+import asyncio
+
 from config import *
 
 FATAL_ERROR = 'FATAL ERROR'
@@ -5,6 +7,7 @@ NIL = 'nil'
 OSTANOV = 'ОСТАНОВ: '
 
 amount_of_msgs = 'Кол-во сообщений в группе за эту неделю: <b>{}</b>\n'
+stop_baula = 'Я ушёл есть мороженое (но обещаю вернуться) 🍦'
 
 too_long_msg = f'{OSTANOV}слишком длинная string 😐'
 empty_msg = f'{OSTANOV}nil сообщение 😂'
@@ -63,7 +66,7 @@ passport_last_name = '\nФамилия:\n  {}'
 passport_pe = '\nФизра:\n  {} ⚽'
 passport_baula = '\nБаулкоины:\n  {}₿'
 passport_rubl = '\nИстория:\n  {}₽'
-passport_sal = '\nПро***ано прака:\n  {} дн(я/ей)'
+passport_sal = '\nПросрок:\n  {} дн(я/ей)'
 passport_msg_count_1w = '\nКол-во сообщений в группе за неделю:\n  {}'
 
 help_txt = (
