@@ -37,8 +37,8 @@ thread_profkomvmk_key = 'thread_profkomvmk'
 baula_sal_key = 'baula_sal'
 
 stats_weekday = 4
-stats_hour = 18
-stats_minute = 0
+stats_hour = 14
+stats_minute = 34
 
 baula_rubl_sal_groups = [107, 108]
 

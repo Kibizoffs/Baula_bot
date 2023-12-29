@@ -5,6 +5,7 @@ import os
 from config import *
 
 async def get_google_sheets():
+    await asyncio.sleep(15 * 60) # после старта подождать 15 минут до цикла
     while True:
         db.cur.execute(f'SELECT {gr_key}, {baula_sal_key} FROM Groups WHERE {baula_sal_key} IS NOT NULL')
         res = db.cur.fetchall()

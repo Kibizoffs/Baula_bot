@@ -78,7 +78,7 @@ async def send_and_clear_stats():
                 group_id = group_row[1]
                 thread_stats = group_row[2]
                 if not thread_stats:
-                    return
+                    continue
 
                 db.cur.execute(f"SELECT {', '.join(x for x in [id_key, msg_count_1w_key])} FROM Students WHERE {gr_key} = ?", (gr,))
                 student_rows = db.cur.fetchall()
@@ -94,7 +94,7 @@ async def send_and_clear_stats():
                         pass
 
                 if len(group_msg_data) < 1:
-                    return
+                    continue
 
                 group_msg_data.sort(reverse=True)
                 s = 0
