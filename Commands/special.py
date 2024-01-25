@@ -22,6 +22,11 @@ special_router = aiogram.Router()
     
 @special_router.message(Command(commands=['base', 'сс']))
 async def command_base(msg: Message):
+    await parse_msg(msg)
+
+    if len(msg.text.split()) < 2:
+        await msg.answer(empty_msg)
+        return
     arguments = msg.text.split()
 
     base = arguments[1]
@@ -112,6 +117,10 @@ async def command_qr(msg: Message):
 @special_router.message(Command(commands=['random', 'рандом']))
 async def command_random(msg: Message):
     await parse_msg(msg)
+
+    if len(msg.text.split()) < 2:
+        await msg.answer(empty_msg)
+        return
     arguments = msg.text.split()
 
     scope = arguments[1]

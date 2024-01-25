@@ -31,7 +31,7 @@ async def command_say(msg: Message):
     
     if len(msg.text.split()) < 2:
         return
-    await msg.answer(stop_baula)
+    await msg.answer(re.sub(r'^\S*\s', '', msg.text))
 
 @admin_router.message(Command(commands=['stop', 'стоп']))
 async def command_stop(msg: Message):
